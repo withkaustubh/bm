@@ -33,3 +33,12 @@ Fibonacci
 bm save program to file
 
 bm load program from file
+
+Date(26 march)
+```
+- added the equality check of last two on stack instruction
+- added the jump if instruction
+- added the duplicate instruction call with relative position from top of stack
+- implemented fibonacci using these instructions
+```
+

@@ -1,0 +1,1 @@
+printf("%zu", strlen(text));
