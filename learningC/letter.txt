@@ -1,3 +1,0 @@
-Hello {{name}} nice to have business with you!
-We hope you love the interaction with {{outlet}}.
-Famiy of {{outlet}} wish you a happy {{message}}
