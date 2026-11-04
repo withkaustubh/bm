@@ -76,6 +76,8 @@ typedef struct
 
 } Bm;
 
+
+
 const char *trap_as_cstr(Trap trap);
 const char *Inst_as_cstr(Inst inst);
 Trap bm_execute_inst(Bm *bm);

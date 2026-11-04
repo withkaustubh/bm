@@ -3,6 +3,10 @@
 
 #include <ctype.h>
 #include <string.h>
+// #include<stdio.h>
+
+// #define SV_fmt "%.*s"
+// #define SV_arg(x) (int)x.count, x.data
 
 String_view sv_from_cstr(char *cstr)
 {
@@ -95,3 +99,14 @@ int sv_equal(String_view a, String_view b)
 
     return memcmp(a.data, b.data, a.count) == 0;
 }
+
+// int main(){
+//     char *mychar = "hello world";
+//     String_view msv = sv_from_cstr(mychar);
+
+//     String_view second = sv_chop_by_delim(&msv, ':');
+//     printf("first is " SV_fmt"\n", SV_arg(msv));
+//      printf("second is " SV_fmt"\n", SV_arg(second));
+    
+
+// }

@@ -7,6 +7,9 @@ all: basm debasm bme
 sv.o: sv.c sv.h
 	$(CC) $(CFLAGS) -c sv.c
 
+# sv : sv.o
+# 	$(CC) $(CFLAGS) -o sv sv.o
+
 # Core VM object
 bm.o: bm.c bm.h
 	$(CC) $(CFLAGS) -c bm.c

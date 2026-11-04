@@ -1,6 +1,9 @@
 push 0
-push 1 #This add a one to the stack
-
-plus 
+push 1
+loop: dup 1
+dup 1
+plus
+jmp loop #these are comments not the actual code
 #jmp 2
-halt
+
+
