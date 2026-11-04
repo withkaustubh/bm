@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stddef.h>
+#include <inttypes.h>
 
 #define MAX_STACK_CAPACITY 1024
 #define BM_PROGRAM_CAPACITY 1024
@@ -68,7 +69,7 @@ typedef struct
   Word stack_size;
 
   Inst Program[BM_PROGRAM_CAPACITY];
-  Word program_size;
+  size_t program_size;
   Word ip;
 
   int halt;
@@ -83,9 +84,6 @@ void bm_dump(FILE *stream, Bm *bm);
 void bm_save_program_to_file(Inst *program, size_t program_size,
                              const char *file_path);
 void bm_load_program_from_file(Bm *bm, const char *file_path);
+Trap bm_execute_program(Bm *bm, int limit);
 
-
-
-
-
-#endif //BM_H
+#endif // BM_H

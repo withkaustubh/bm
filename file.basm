@@ -1,0 +1,6 @@
+push 0
+push 1 #This add a one to the stack
+
+plus 
+#jmp 2
+halt

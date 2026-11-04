@@ -1,7 +1,7 @@
 CC = gcc
 CFLAGS = -Wall -Wextra -std=c11 -pedantic -O2
 
-all: ebasm bmi
+all: basm debasm bme
 
 # String view object
 sv.o: sv.c sv.h
@@ -12,12 +12,14 @@ bm.o: bm.c bm.h
 	$(CC) $(CFLAGS) -c bm.c
 
 # Assembler executable
-ebasm: ebasm.c sv.o bm.o
-	$(CC) $(CFLAGS) -o ebasm ebasm.c sv.o bm.o
+basm: basm.c sv.o bm.o
+	$(CC) $(CFLAGS) -o basm basm.c sv.o bm.o
 
+debasm: debasm.c bm.o
+	$(CC) $(CFLAGS) -o debasm debasm.c bm.o
 # Interpreter executable
-bmi: bmi.c bm.o
-	$(CC) $(CFLAGS) -o bmi bmi.c bm.o
+bme: bme.c bm.o
+	$(CC) $(CFLAGS) -o bme bme.c bm.o
 
 clean:
-	rm -f *.o ebasm bmi
+	rm -f *.o basm bme

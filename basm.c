@@ -1,7 +1,44 @@
 #include "./bm.h"
 #include "./sv.h"
 
-Inst bm_translate_line(String_view line)
+typedef struct {
+    String_view name;
+    size_t address;
+} Label;
+
+typedef struct {
+    Label items[1024];
+    size_t count;
+} Label_Table;
+
+typedef struct {
+    size_t inst_addr; 
+    String_view label_name;   
+} Deferred_Operand;
+
+#define MAX_DEFERRED 1024
+
+typedef struct {
+    Deferred_Operand items[MAX_DEFERRED];
+    size_t count;
+} Deferred_Table;
+
+Label_Table lt;
+Deferred_Table dt;
+
+int lt_find_label(Label_Table *lt, String_view name, size_t *out_address){
+  for(size_t i = 0; i < lt->count; ++i){
+    if(sv_equal(lt->items[i].name, name)){
+      if(out_address){
+        *out_address = lt->items[i].address;
+      }
+      return 1;
+    }
+  }
+  return 0;
+}
+
+Inst bm_translate_line(String_view line, Bm *bm)
 {
   line = sv_trim_left(line);
 
@@ -31,9 +68,12 @@ Inst bm_translate_line(String_view line)
   }
   else if (sv_equal(inst_name, sv_from_cstr("jmp")))
   {
-    line = sv_trim(line);
-    Word operand = sv_to_int(line);
-    return (Inst)MAKE_INST_JMP(operand);
+    line = sv_trim_left(line);
+    sv_chop_by_delim(&line, ' ');
+    line = sv_trim(line); // now line stores label name;
+    dt.items[dt.count++] = (Deferred_Operand){.inst_addr = bm->program_size, .label_name = line};
+
+    return (Inst){.type = Inst_Jmp, .operand = 0};
   }
   else if (sv_equal(inst_name, sv_from_cstr("halt")))
   {
@@ -62,15 +102,15 @@ Inst bm_translate_line(String_view line)
   }
 }
 
-int bm_translate_source(Bm *bm, String_view *source, long Program_capacity)
+int bm_translate_source(Bm *bm, String_view *source, size_t Program_capacity)
 {
   bm->program_size = 0;
   while (source->count != 0)
   {
     String_view line = sv_chop_by_delim(source, '\n');
     line = sv_trim(line);
-
-    if (line.count == 0 || line.data[0] == '#')
+    String_view code = sv_chop_by_delim(&line, '#');
+    if (code.count == 0)
     {
       // igonre this line and move on
       continue;
@@ -81,9 +121,20 @@ int bm_translate_source(Bm *bm, String_view *source, long Program_capacity)
       fprintf(stderr, "Error : Program Maximum Capacity reached!");
       exit(1);
     }
+    if(code.data[code.count -1] == ':'){
+      String_view lab = sv_chop_by_delim(&code, ':');
+      lab = sv_trim(lab);
+      lt.items[lt.count++] = (Label){.name = lab.data, .address = bm->program_size};
+      continue;
+    }
 
-    bm->Program[bm->program_size++] = bm_translate_line(line);
-    printf("Added line " SV_fmt "\n", SV_arg(line));
+    bm->Program[bm->program_size++] = bm_translate_line(code, bm);
+    printf("Added line " SV_fmt "\n", SV_arg(code));
+  }
+
+  while(dt.count > 0){
+    Deferred_Operand jmp_stat = dt.items[dt.count--];
+    int ind_to_jmp = lt.lt_find_label(jmp_stat.label_name);
   }
   return bm->program_size;
 }
@@ -134,7 +185,7 @@ String_view slurp(const char *file_path)
 
 int main(int argc, char** argv){
   if(argc < 3){
-    fprintf(stderr, "Usage : <./bm> <input.ebasm> <output.bm> \n");
+    fprintf(stderr, "Usage : <./bm> <input.basm> <output.bm> \n");
     fprintf(stderr , "Error : input and output are expected!\n");
   }
 

@@ -285,3 +285,22 @@ void bm_load_program_from_file(Bm *bm, const char *file_path)
   bm->program_size = program_size;
   fclose(f);
 }
+
+Trap bm_execute_program(Bm *bm, int limit)
+{
+    while (!bm->halt && limit != 0)
+    {
+        Trap trap = bm_execute_inst(bm);
+        if (trap != Trap_OK)
+        {
+            fprintf(stderr, "ERROR: %s\n", trap_as_cstr(trap));
+            bm_dump(stderr, bm);
+            exit(1);
+        }
+
+        if (limit > 0)
+            limit--;
+    }
+    
+    return Trap_OK;
+}

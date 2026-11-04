@@ -1,7 +1,0 @@
-fputc - puts a character
-fputs - puts a string
-fetc - gets the character
-fgets(buffer, int size, fptr)
-fopen - opens a file
-fprint - prints in a  file
-fscanf - scans in the file
