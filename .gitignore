@@ -1,0 +1,11 @@
+# Compiled object files
+*.o
+
+# Compiled executables
+/basm
+/bme
+/debasm
+/sv
+
+# Backup files
+*~
